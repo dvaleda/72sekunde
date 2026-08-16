@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.font-display {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Big tappable answer buttons should never trigger iOS zoom/selection glow */
+button {
+  -webkit-user-select: none;
+  user-select: none;
+}
