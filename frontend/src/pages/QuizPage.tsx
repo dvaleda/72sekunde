@@ -130,7 +130,7 @@ export default function QuizPage() {
         ) : (
           <div className="flex-1 flex flex-col">
             <p className="font-display font-semibold text-lg text-gray-900 text-center mb-6 min-h-[3.5rem] flex items-center justify-center">
-              {question.text}
+              {question?.text}
             </p>
 
             <div className="space-y-3">
@@ -144,7 +144,7 @@ export default function QuizPage() {
                   <span className="w-8 h-8 rounded-full bg-brand-green/10 text-brand-green font-display font-bold flex items-center justify-center shrink-0">
                     {key}
                   </span>
-                  <span className="text-gray-800 font-medium">{question.options[key]}</span>
+                  <span className="text-gray-800 font-medium">{question?.options[key]}</span>
                 </button>
               ))}
             </div>
