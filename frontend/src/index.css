@@ -9,14 +9,188 @@ html, body, #root {
 body {
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-tap-highlight-color: transparent;
+  background: #060d07;
 }
 
 .font-display {
   font-family: 'Poppins', sans-serif;
 }
 
-/* Big tappable answer buttons should never trigger iOS zoom/selection glow */
 button {
   -webkit-user-select: none;
   user-select: none;
+}
+
+/* ── Background ── */
+.gradient-bg {
+  background: #060d07;
+  background-image:
+    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(153,199,41,0.13) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 35% at 85% 105%, rgba(0,155,235,0.09) 0%, transparent 55%);
+  position: relative;
+}
+
+/* Subtle noise grain overlay */
+.gradient-bg::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+.gradient-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Timer ── */
+.timer-glow-green {
+  text-shadow: 0 0 50px rgba(153,199,41,0.55), 0 0 100px rgba(153,199,41,0.2);
+}
+
+.timer-glow-red {
+  text-shadow: 0 0 50px rgba(239,68,68,0.65), 0 0 100px rgba(239,68,68,0.3);
+  animation: pulse-scale 0.55s ease-in-out infinite;
+}
+
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+/* ── Answer buttons ── */
+.answer-btn {
+  transition: all 0.15s ease;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.03);
+  color: white;
+  backdrop-filter: blur(8px);
+  position: relative;
+  overflow: hidden;
+}
+
+.answer-btn::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: transparent;
+  transition: background 0.15s ease;
+  border-radius: 0 2px 2px 0;
+}
+
+.answer-btn:not(:disabled):hover {
+  border-color: rgba(153,199,41,0.35);
+  background: rgba(153,199,41,0.06);
+  transform: translateX(2px);
+}
+
+.answer-btn:not(:disabled):hover::before {
+  background: rgba(153,199,41,0.7);
+}
+
+.answer-btn:not(:disabled):active {
+  transform: scale(0.985) translateX(2px);
+}
+
+.answer-btn-correct {
+  transition: all 0.15s ease;
+  border: 1px solid rgba(153,199,41,0.8);
+  background: rgba(153,199,41,0.22);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(153,199,41,0.15) inset;
+}
+
+.answer-btn-correct::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: #99c729;
+  border-radius: 0 2px 2px 0;
+}
+
+.answer-btn-wrong {
+  transition: all 0.15s ease;
+  border: 1px solid rgba(239,68,68,0.7);
+  background: rgba(239,68,68,0.18);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(239,68,68,0.1) inset;
+}
+
+.answer-btn-wrong::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: rgba(239,68,68,0.9);
+  border-radius: 0 2px 2px 0;
+}
+
+.answer-btn-dim {
+  opacity: 0.18;
+  filter: saturate(0.3);
+}
+
+/* ── Glass card ── */
+.glass-card {
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+/* ── Input fields ── */
+.field-input {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: white;
+  font-size: 1rem;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  outline: none;
+}
+
+.field-input::placeholder {
+  color: rgba(255,255,255,0.18);
+}
+
+.field-input:focus {
+  border-color: rgba(153,199,41,0.5);
+  background: rgba(153,199,41,0.04);
+}
+
+/* ── Shimmer skeleton ── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.09) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* ── Circular timer arc ── */
+.timer-arc-track {
+  stroke: rgba(255,255,255,0.06);
+}
+
+.timer-arc-fill {
+  transition: stroke-dashoffset 0.28s linear, stroke 0.4s ease;
+  stroke-linecap: round;
 }

@@ -65,14 +65,14 @@ export const api = {
       | { finished: true; reason: string }
       | {
           finished: false;
-          question: { id: string; text: string; options: { A: string; B: string; C: string } };
+          question: { id: string; text: string; options: { A: string; B: string; C: string }; category: string };
           expiresAt: string;
           sequenceNumber: number;
         }
     >(`/attempts/${attemptId}/question`),
 
   submitAnswer: (attemptId: string, questionId: string, selected: 'A' | 'B' | 'C') =>
-    request<{ accepted: true }>(`/attempts/${attemptId}/answer`, {
+    request<{ accepted: true; correct: boolean; correctAnswer: 'A' | 'B' | 'C'; expiresAt: string; streakBonus: boolean }>(`/attempts/${attemptId}/answer`, {
       method: 'POST',
       body: JSON.stringify({ questionId, selected }),
     }),
@@ -83,9 +83,12 @@ export const api = {
     }),
 
   getLeaderboard: (attemptId?: string) =>
-    request<{ leaderboard: { rank: number; nickname: string; score: number }[]; myRank: number | null }>(
+    request<{ leaderboard: { rank: number; nickname: string; score: number }[]; myRank: number | null; myRow: { rank: number; nickname: string; score: number } | null; totalPlayers: number; topScore: number }>(
       `/leaderboard${attemptId ? `?attemptId=${attemptId}` : ''}`
     ),
+
+  getStats: () =>
+    request<{ totalPlayers: number; topScore: number }>('/stats'),
 
   getEventConfig: () => request<{ config: EventConfig }>('/event-config'),
 };

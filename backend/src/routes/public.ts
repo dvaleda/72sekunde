@@ -249,7 +249,7 @@ publicRouter.get('/attempts/:id/question', async (req, res) => {
 
   const { data: question } = await supabase
     .from('questions')
-    .select('id, question_text, option_a, option_b, option_c')
+    .select('id, question_text, option_a, option_b, option_c, category')
     .eq('id', nextQuestionId)
     .single();
 
@@ -260,6 +260,7 @@ publicRouter.get('/attempts/:id/question', async (req, res) => {
     question: {
       id: question.id,
       text: question.question_text,
+      category: question.category,
       options: { A: question.option_a, B: question.option_b, C: question.option_c },
     },
     expiresAt: attempt.expires_at,
@@ -313,7 +314,7 @@ publicRouter.post('/attempts/:id/answer', async (req, res) => {
 
   const { data: answeredRows } = await supabase
     .from('answers')
-    .select('id')
+    .select('id, is_correct')
     .eq('attempt_id', attemptId);
   const sequenceNumber = (answeredRows?.length ?? 0) + 1;
 
@@ -328,17 +329,30 @@ publicRouter.post('/attempts/:id/answer', async (req, res) => {
   });
   if (insertErr) return res.status(500).json({ error: 'Greška prilikom spremanja odgovora.' });
 
+  // Bonus +3s only when current answer completes an exact new group of 3 correct in a row.
+  // Count consecutive correct answers ending with this one.
+  const allOutcomes = [...(answeredRows ?? []).map((a: any) => a.is_correct), isCorrect];
+  let consecutiveCorrect = 0;
+  for (let i = allOutcomes.length - 1; i >= 0; i--) {
+    if (allOutcomes[i]) consecutiveCorrect++;
+    else break;
+  }
+  const streakBonus = consecutiveCorrect > 0 && consecutiveCorrect % 3 === 0;
+  const bonusMs = streakBonus ? 3000 : 0;
+
+  // Extend expires_at by 700ms (feedback display) + streak bonus
+  const newExpiresAt = new Date(new Date(attempt.expires_at).getTime() + 700 + bonusMs);
+
   await supabase
     .from('attempts')
     .update({
       score: attempt.score + (isCorrect ? 1 : 0),
       answered_count: attempt.answered_count + 1,
+      expires_at: newExpiresAt.toISOString(),
     })
     .eq('id', attemptId);
 
-  // Do NOT return whether it was correct, or the correct answer, to keep
-  // the client from being able to infer answers ahead of the result screen.
-  return res.json({ accepted: true });
+  return res.json({ accepted: true, correct: isCorrect, correctAnswer: question.correct_answer, expiresAt: newExpiresAt.toISOString(), streakBonus });
 });
 
 // ---------- POST /api/attempts/:id/finish ----------
@@ -400,20 +414,38 @@ publicRouter.get('/leaderboard', async (req, res) => {
     score: row.score,
   }));
 
+  const totalPlayers = (data ?? []).length;
+  const topScore = totalPlayers > 0 ? (data as any[])[0].score : 0;
+
   let myRank: number | null = null;
+  let myRow: { rank: number; nickname: string; score: number } | null = null;
   const attemptId = req.query.attemptId ? String(req.query.attemptId) : null;
   if (attemptId) {
     const { data: all } = await supabase
       .from('leaderboard_view')
-      .select('attempt_id')
+      .select('attempt_id, nickname, score')
       .order('score', { ascending: false })
       .order('elapsed_seconds', { ascending: true })
       .order('finished_at', { ascending: true });
     const idx = (all ?? []).findIndex((r: any) => r.attempt_id === attemptId);
-    myRank = idx >= 0 ? idx + 1 : null;
+    if (idx >= 0) {
+      myRank = idx + 1;
+      myRow = { rank: myRank, nickname: (all as any[])[idx].nickname, score: (all as any[])[idx].score };
+    }
   }
 
-  return res.json({ leaderboard: rows, myRank });
+  return res.json({ leaderboard: rows, myRank, myRow, totalPlayers, topScore });
+});
+
+// ---------- GET /api/stats ----------
+publicRouter.get('/stats', async (_req, res) => {
+  const { data } = await supabase
+    .from('leaderboard_view')
+    .select('score')
+    .order('score', { ascending: false });
+  const totalPlayers = (data ?? []).length;
+  const topScore = totalPlayers > 0 ? (data as any[])[0].score : 0;
+  return res.json({ totalPlayers, topScore });
 });
 
 // ---------- GET /api/event-config ----------

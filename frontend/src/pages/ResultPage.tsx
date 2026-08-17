@@ -11,6 +11,8 @@ interface ResultState {
   playerId?: string;
 }
 
+const MEDALS = ['', '🥇', '🥈', '🥉'];
+
 export default function ResultPage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -18,105 +20,217 @@ export default function ResultPage() {
 
   const [leaderboard, setLeaderboard] = useState<{ rank: number; nickname: string; score: number }[]>([]);
   const [myRank, setMyRank] = useState<number | null>(state.rank ?? null);
+  const [myRow, setMyRow] = useState<{ rank: number; nickname: string; score: number } | null>(null);
   const [config, setConfig] = useState<EventConfig | null>(null);
+  const [displayScore, setDisplayScore] = useState(0);
+
+  const finalScore = state.score ?? 0;
+  const attemptsUsed = state.attemptsUsed ?? 3;
+  const canPlayAgain = attemptsUsed < 2;
+  useEffect(() => {
+    if (finalScore === 0) return;
+    const steps = 28;
+    const increment = finalScore / steps;
+    let current = 0;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= finalScore) { setDisplayScore(finalScore); clearInterval(timer); }
+      else setDisplayScore(Math.floor(current));
+    }, 800 / steps);
+    return () => clearInterval(timer);
+  }, [finalScore]);
 
   useEffect(() => {
-    if (!state.attemptId && state.score === undefined) {
-      navigate('/');
-      return;
-    }
-    api
-      .getLeaderboard(state.attemptId)
-      .then((res) => {
-        setLeaderboard(res.leaderboard.slice(0, 10));
-        if (res.myRank) setMyRank(res.myRank);
-      })
-      .catch(() => {});
-    api
-      .getEventConfig()
-      .then((res) => setConfig(res.config))
-      .catch(() => {});
+    if (!state.attemptId && state.score === undefined) { navigate('/'); return; }
+    api.getLeaderboard(state.attemptId).then((res) => {
+      setLeaderboard(res.leaderboard.slice(0, 10));
+      if (res.myRank) setMyRank(res.myRank);
+      if (res.myRow) setMyRow(res.myRow);
+    }).catch(() => {});
+    api.getEventConfig().then((res) => setConfig(res.config)).catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const attemptsUsed = state.attemptsUsed ?? 3;
-  const canPlayAgain = attemptsUsed < 2;
+  const registrationOpen = Boolean(config?.official_registration_url);
 
   function handlePlayAgain() {
     navigate('/register', { state: { playerId: state.playerId, attemptsUsed } });
   }
 
-  const registrationOpen = Boolean(config?.official_registration_url);
+  const scoreMessage =
+    finalScore >= 25 ? 'Nevjerojatno! Pravi poznavatelj vjere.' :
+    finalScore >= 18 ? 'Izvrsno! Znanje te ne izdaje.' :
+    finalScore >= 10 ? 'Dobro! Ima još prostora za rast.' :
+    'Dobar pokušaj! Nauči nešto novo i vrati se.';
+
+  async function handleShare() {
+    const text = `Rezultat: ${finalScore} bodova u 72 sekunde kvizu! Možeš li bolje? https://seven2sekunde.onrender.com`;
+    try {
+      if (navigator.share) await navigator.share({ text });
+      else { await navigator.clipboard.writeText(text); alert('Kopirano u međuspremnik!'); }
+    } catch { /* cancelled */ }
+  }
+
+  const myRankInTop10 = myRank !== null && myRank <= 10;
+
+  const scoreGradient =
+    finalScore >= 20 ? 'linear-gradient(135deg, #c8e86a 0%, #99c729 50%, #6aab00 100%)' :
+    finalScore >= 10 ? 'linear-gradient(135deg, #7dd3fc 0%, #009beb 100%)' :
+    'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)';
 
   return (
-    <div className="min-h-screen flex flex-col bg-white px-5 py-8">
-      <div className="max-w-sm mx-auto w-full flex-1 flex flex-col">
-        <div className="text-center mb-8">
-          <h1 className="font-display font-extrabold text-2xl text-brand-greenDark mb-1">Vrijeme je isteklo!</h1>
-          <p className="text-gray-500 text-sm">Bravo! Hvala ti što si sudjelovao/la.</p>
+    <div className="min-h-screen gradient-bg flex flex-col px-5 py-6">
+      <div className="max-w-sm mx-auto w-full flex flex-col">
+
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4 shrink-0">
+          <img src="/logo-transparent.png" alt="72H" className="h-7" />
+          <span className="text-white/20 text-[10px] tracking-[0.25em] uppercase font-semibold">Rezultat</span>
         </div>
 
-        <button
-          onClick={() => navigate('/')}
-          className="mb-4 text-sm text-brand-green underline text-center w-full"
-        >
-          ← Povratak na početnu
-        </button>
-
-        <div className="bg-brand-green/5 border border-brand-green/20 rounded-2xl p-6 text-center mb-6">
-          <div className="font-display font-extrabold text-5xl text-brand-green mb-1">{state.score ?? 0}</div>
-          <div className="text-gray-600 text-sm mb-4">točnih odgovora</div>
-          <div className="text-gray-500 text-xs">Odgovorio/la si na {state.answeredCount ?? 0} pitanja</div>
-          {myRank && <div className="text-gray-500 text-xs mt-1">Plasman: #{myRank}</div>}
-          <div className="text-gray-400 text-xs mt-1">Pokušaj {attemptsUsed} od 2</div>
-        </div>
-
-        <p className="text-center text-gray-600 text-sm mb-6">
-          Zanima te više o 72 sata bez kompromisa? Prijavi se!
-        </p>
-
-        {canPlayAgain && (
-          <button
-            onClick={handlePlayAgain}
-            className="w-full text-center border-2 border-brand-green text-brand-green font-display font-bold text-lg py-4 rounded-2xl mb-3 active:scale-[0.98] transition-all"
+        {/* Score card */}
+        <div className="shrink-0 mb-3">
+          <div
+            className="rounded-2xl px-5 py-5 text-center relative overflow-hidden"
+            style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.07)',
+              borderTop: `2px solid ${finalScore >= 20 ? '#99c729' : finalScore >= 10 ? '#009beb' : 'rgba(255,255,255,0.12)'}`,
+              backdropFilter: 'blur(20px)',
+            }}
           >
-            IGRAJ PONOVO ({2 - attemptsUsed} pokušaj preostao)
-          </button>
-        )}
-
-        {registrationOpen ? (
-          <a
-            href={config?.official_registration_url ?? '#'}
-            className="w-full text-center bg-brand-green hover:bg-brand-greenDark text-white font-display font-bold text-lg py-4 rounded-2xl shadow-lg shadow-brand-green/20 mb-8"
-          >
-            PRIJAVI SE NA 72H
-          </a>
-        ) : (
-          <a
-            href={config?.official_project_url ?? 'https://72h.hr/'}
-            className="w-full text-center bg-brand-green hover:bg-brand-greenDark text-white font-display font-bold text-lg py-4 rounded-2xl shadow-lg shadow-brand-green/20 mb-8"
-          >
-            SAZNAJ VIŠE O 72H
-          </a>
-        )}
-
-        <div>
-          <h2 className="font-display font-bold text-brand-greenDark mb-3">Ljestvica</h2>
-          <div className="rounded-2xl border border-gray-100 overflow-hidden">
-            {leaderboard.map((row) => (
+            {/* Watermark — high score number, low score faint ? */}
+            {finalScore >= 15 ? (
               <div
-                key={row.rank}
-                className={`flex items-center justify-between px-4 py-3 text-sm ${
-                  row.rank % 2 === 0 ? 'bg-gray-50' : 'bg-white'
-                }`}
+                className="absolute right-3 top-1/2 -translate-y-1/2 font-display font-black leading-none tabular-nums pointer-events-none select-none"
+                style={{ fontSize: '120px', opacity: 0.04, color: finalScore >= 20 ? '#99c729' : '#009beb' }}
               >
-                <span className="text-gray-500 w-8">#{row.rank}</span>
-                <span className="flex-1 font-medium text-gray-800">{row.nickname}</span>
-                <span className="font-display font-bold text-brand-green">{row.score}</span>
+                {finalScore}
               </div>
-            ))}
-            {leaderboard.length === 0 && (
-              <div className="px-4 py-6 text-center text-gray-400 text-sm">Ljestvica se učitava...</div>
+            ) : (
+              <div
+                className="absolute right-4 top-1/2 -translate-y-1/2 font-display font-black leading-none pointer-events-none select-none"
+                style={{ fontSize: '100px', opacity: 0.03, color: 'white' }}
+              >
+                ?
+              </div>
+            )}
+            <div
+              className="font-display font-black text-[72px] leading-none tabular-nums text-transparent bg-clip-text relative"
+              style={{ backgroundImage: scoreGradient }}
+            >
+              {displayScore}
+            </div>
+            <p className="text-white/50 text-sm font-medium mt-1 relative">{scoreMessage}</p>
+            <p className="text-white/20 text-xs mt-2 relative">
+              {state.answeredCount ?? 0} pitanja
+              {myRank ? <span> &middot; plasman <strong className="text-white/40">#{myRank}</strong></span> : null}
+              <span> &middot; pokušaj {attemptsUsed}/2</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="shrink-0 space-y-2 mb-3">
+          {canPlayAgain && (
+            <button
+              onClick={handlePlayAgain}
+              className="w-full font-display font-black text-sm py-3 rounded-xl tracking-widest transition-all active:scale-[0.97]"
+              style={{ border: '1px solid rgba(153,199,41,0.35)', color: '#99c729', background: 'rgba(153,199,41,0.06)' }}
+            >
+              IGRAJ PONOVO — preostao {2 - attemptsUsed} pokušaj
+            </button>
+          )}
+
+          <div className="flex gap-2">
+            <a
+              href={registrationOpen ? (config?.official_registration_url ?? '#') : (config?.official_project_url ?? 'https://72h.hr/')}
+              className="flex-1 text-center font-display font-black text-sm py-3 rounded-xl tracking-widest transition-all active:scale-[0.97]"
+              style={{
+                background: 'linear-gradient(135deg, #a8d42e 0%, #99c729 50%, #7aab1a 100%)',
+                boxShadow: '0 4px 20px rgba(153,199,41,0.3)',
+                color: '#0a1a04',
+              }}
+            >
+              {registrationOpen ? 'PRIJAVI SE' : 'SAZNAJ VIŠE'}
+            </a>
+            <button
+              onClick={handleShare}
+              className="flex-1 font-display font-black text-sm py-3 rounded-xl tracking-widest transition-all active:scale-[0.97]"
+              style={{ border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.02)' }}
+            >
+              PODIJELI
+            </button>
+          </div>
+
+          <button
+            onClick={() => navigate('/')}
+            className="w-full text-xs text-white/20 hover:text-white/40 transition-colors py-1 tracking-wide"
+          >
+            ← Povratak na početnu
+          </button>
+        </div>
+
+        {/* Leaderboard */}
+        <div className="mt-1">
+          <p className="text-white/20 text-[10px] tracking-[0.25em] uppercase mb-2 font-semibold">Ljestvica</p>
+          <div
+            className="rounded-2xl overflow-hidden"
+            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+          >
+            {leaderboard.length === 0 ? (
+              <div className="px-3 py-3 space-y-2.5">
+                {[0, 1, 2, 3, 4].map(i => (
+                  <div key={i} className="flex items-center gap-3" style={{ opacity: 1 - i * 0.15 }}>
+                    <div className="w-5 h-3 rounded shimmer shrink-0" />
+                    <div className="flex-1 h-3 rounded shimmer" />
+                    <div className="w-6 h-3 rounded shimmer shrink-0" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <>
+                {leaderboard.map((row, i) => {
+                  const isMe = myRank === row.rank;
+                  const isTop3 = row.rank <= 3;
+                  return (
+                    <div
+                      key={row.rank}
+                      className={`flex items-center px-3 py-2 gap-3 ${i < leaderboard.length - 1 ? 'border-b border-white/[0.04]' : ''}`}
+                      style={isMe ? { background: 'rgba(153,199,41,0.07)', borderLeft: '2px solid #99c729' } : {}}
+                    >
+                      <span className="w-5 text-center shrink-0 text-xs">
+                        {isTop3
+                          ? MEDALS[row.rank]
+                          : <span className="font-display font-black text-white/35 tabular-nums">{row.rank}</span>
+                        }
+                      </span>
+                      <span className={`flex-1 text-xs truncate ${isMe ? 'text-white font-bold' : 'text-white/55 font-medium'}`}>
+                        {row.nickname}
+                      </span>
+                      <span
+                        className="font-display font-black text-sm tabular-nums shrink-0"
+                        style={{ color: isMe ? '#99c729' : isTop3 ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.2)' }}
+                      >
+                        {row.score}
+                      </span>
+                    </div>
+                  );
+                })}
+                {!myRankInTop10 && myRow && (
+                  <>
+                    <div className="px-3 py-1 text-center text-white/15 text-xs tracking-widest">· · ·</div>
+                    <div
+                      className="flex items-center px-3 py-2.5 gap-3"
+                      style={{ background: 'rgba(153,199,41,0.07)', borderLeft: '2px solid #99c729' }}
+                    >
+                      <span className="w-5 text-center shrink-0 font-display font-black text-xs text-white/35 tabular-nums">{myRow.rank}</span>
+                      <span className="flex-1 text-xs font-bold text-white truncate">{myRow.nickname}</span>
+                      <span className="font-display font-black text-sm tabular-nums" style={{ color: '#99c729' }}>{myRow.score}</span>
+                    </div>
+                  </>
+                )}
+              </>
             )}
           </div>
         </div>

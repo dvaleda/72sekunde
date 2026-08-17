@@ -1,41 +1,68 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../lib/api';
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const [stats, setStats] = useState<{ totalPlayers: number; topScore: number } | null>(null);
+
+  useEffect(() => {
+    api.getStats().then(setStats).catch(() => {});
+  }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <main className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-        <div className="mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-brand-green flex items-center justify-center mx-auto mb-6">
-            <span className="text-white font-display font-bold text-2xl">72</span>
-          </div>
-          <h1 className="font-display font-extrabold text-4xl sm:text-5xl text-brand-greenDark tracking-tight">
-            72 SEKUNDE
-          </h1>
-        </div>
+    <div className="min-h-screen gradient-bg flex flex-col px-6 py-10">
+      <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full animate-fade-in">
 
-        <p className="text-lg font-semibold text-gray-800 max-w-sm mb-3">
+        <img
+          src="/logo-transparent.png"
+          alt="72 sata bez kompromisa"
+          className="w-32 mb-10"
+        />
+
+        <h1 className="font-display font-black text-6xl leading-none tracking-tight mb-4">
+          <span className="text-brand-green">72</span>
+          <span className="text-white"> SEK</span>
+          <span className="text-brand-blue">UNDE</span>
+        </h1>
+
+        <p className="text-white/40 text-sm leading-relaxed mb-8">
           Koliko znaš o vjeri, Mariji Bistrici i projektu 72 sata bez kompromisa?
+          Imaš 72 sekunde — odgovori na što više pitanja.
         </p>
 
-        <p className="text-gray-500 max-w-xs mb-10 leading-relaxed">
-          Imaš 72 sekunde. Odgovori na što više pitanja. Budi brz. Budi precizan. Pruži nadu.
-        </p>
+        {stats && stats.totalPlayers > 0 && (
+          <div className="flex gap-3 mb-8">
+            <div className="flex-1 glass-card rounded-xl px-4 py-3 flex items-center gap-3">
+              <span className="font-display font-black text-2xl text-white tabular-nums">{stats.totalPlayers}</span>
+              <span className="text-white/45 text-xs leading-tight">igrača<br />do sad</span>
+            </div>
+            <div className="flex-1 glass-card rounded-xl px-4 py-3 flex items-center gap-3">
+              <span className="font-display font-black text-2xl tabular-nums" style={{ color: '#99c729' }}>{stats.topScore}</span>
+              <span className="text-white/45 text-xs leading-tight">trenutni<br />rekord</span>
+            </div>
+          </div>
+        )}
 
         <button
           onClick={() => navigate('/register')}
-          className="w-full max-w-xs bg-brand-green hover:bg-brand-greenDark active:scale-[0.98] transition-all text-white font-display font-bold text-lg py-4 rounded-2xl shadow-lg shadow-brand-green/20"
+          className="w-full font-display font-black text-xl py-4 rounded-2xl tracking-widest transition-all duration-150 active:scale-[0.97]"
+          style={{
+            background: 'linear-gradient(135deg, #a8d42e 0%, #99c729 50%, #7aab1a 100%)',
+            boxShadow: '0 0 40px rgba(153,199,41,0.3), 0 1px 0 rgba(255,255,255,0.12) inset',
+            color: '#0a1a04',
+          }}
         >
           KRENI
         </button>
 
-        <div className="mt-6 text-xs text-gray-400 space-x-3">
-          <a href="/rules" className="underline">Pravila kviza</a>
-          <span>·</span>
-          <a href="/privacy" className="underline">Privatnost</a>
-        </div>
-      </main>
+      </div>
+
+      <div className="text-center text-[11px] text-white/20 space-x-4 pb-2">
+        <a href="/rules" className="hover:text-white/45 transition-colors">Pravila kviza</a>
+        <span>·</span>
+        <a href="/privacy" className="hover:text-white/45 transition-colors">Privatnost</a>
+      </div>
     </div>
   );
 }
