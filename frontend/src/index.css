@@ -4,6 +4,14 @@
 
 html, body, #root {
   height: 100%;
+  background: #060d07;
+}
+
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  overscroll-behavior: none;
+  touch-action: pan-y;
 }
 
 body {
@@ -19,6 +27,7 @@ body {
 button {
   -webkit-user-select: none;
   user-select: none;
+  touch-action: manipulation;
 }
 
 /* ── Background ── */
@@ -154,7 +163,7 @@ button {
   border-radius: 14px;
   padding: 14px 16px;
   color: white;
-  font-size: 1rem;
+  font-size: 16px;
   transition: border-color 0.15s ease, background 0.15s ease;
   outline: none;
 }

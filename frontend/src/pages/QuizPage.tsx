@@ -263,7 +263,7 @@ export default function QuizPage() {
   // Countdown screen
   if (countdown !== null) {
     return (
-      <div className="min-h-screen gradient-bg flex flex-col items-center justify-center gap-4">
+      <div className="min-h-dvh gradient-bg flex flex-col items-center justify-center gap-4">
         <div className="relative mb-2">
           <ArcTimer progress={1} urgent={false} />
           <div className="absolute inset-0 flex items-center justify-center">
@@ -290,7 +290,7 @@ export default function QuizPage() {
   const catBorder = question?.category ? CATEGORY_BORDER[question.category] : 'rgba(153,199,41,0.3)';
 
   return (
-    <div className="min-h-screen gradient-bg flex flex-col px-5 py-6">
+    <div className="min-h-dvh gradient-bg flex flex-col px-5 py-6">
       <div className="max-w-sm mx-auto w-full flex-1 flex flex-col">
 
         {/* Header */}

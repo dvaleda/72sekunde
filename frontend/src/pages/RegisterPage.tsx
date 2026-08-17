@@ -57,7 +57,7 @@ export default function RegisterPage() {
 
   if (locationState.playerId) {
     return (
-      <div className="min-h-screen gradient-bg flex flex-col px-6 py-10">
+      <div className="min-h-dvh gradient-bg flex flex-col px-6 py-10">
         <div className="max-w-sm mx-auto w-full flex-1 flex flex-col justify-center items-center text-center gap-8 animate-fade-in">
           <img src="/logo-transparent.png" alt="72H" className="w-36" />
           <div>
@@ -86,7 +86,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen gradient-bg flex flex-col px-6 py-10">
+    <div className="min-h-dvh gradient-bg flex flex-col px-6 py-10">
       <div className="max-w-sm mx-auto w-full animate-fade-in">
 
         <div className="pt-4 pb-10">
@@ -118,6 +118,7 @@ export default function RegisterPage() {
               className="field-input"
               placeholder="ime@example.com"
               autoComplete="email"
+              inputMode="email"
             />
           </div>
 

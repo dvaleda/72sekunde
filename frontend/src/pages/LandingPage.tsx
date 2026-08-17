@@ -11,7 +11,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen gradient-bg flex flex-col px-6 py-10">
+    <div className="min-h-dvh gradient-bg flex flex-col px-6 py-10">
       <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full animate-fade-in">
 
         <img

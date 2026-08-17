@@ -79,7 +79,7 @@ export default function ResultPage() {
     'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)';
 
   return (
-    <div className="min-h-screen gradient-bg flex flex-col px-5 py-6">
+    <div className="min-h-dvh gradient-bg flex flex-col px-5 py-6">
       <div className="max-w-sm mx-auto w-full flex flex-col">
 
         {/* Header */}
