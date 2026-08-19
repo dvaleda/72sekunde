@@ -4,7 +4,7 @@
 
 html, body, #root {
   height: 100%;
-  background: #060d07;
+  background: #e8f4fd;
 }
 
 body {
@@ -17,7 +17,7 @@ body {
 body {
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-tap-highlight-color: transparent;
-  background: #060d07;
+  background: #e8f4fd;
 }
 
 .font-display {
@@ -32,10 +32,11 @@ button {
 
 /* ── Background ── */
 .gradient-bg {
-  background: #060d07;
+  background: #e8f4fd;
   background-image:
-    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(153,199,41,0.13) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 35% at 85% 105%, rgba(0,155,235,0.09) 0%, transparent 55%);
+    radial-gradient(ellipse 110% 45% at 50% 0%, rgba(153,199,41,0.5) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 100% 100%, rgba(0,155,235,0.4) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 0% 85%, rgba(0,155,235,0.25) 0%, transparent 50%);
   position: relative;
 }
 
@@ -48,7 +49,7 @@ button {
   background-size: 180px 180px;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.6;
+  opacity: 0.4;
 }
 
 .gradient-bg > * {
@@ -58,11 +59,11 @@ button {
 
 /* ── Timer ── */
 .timer-glow-green {
-  text-shadow: 0 0 50px rgba(153,199,41,0.55), 0 0 100px rgba(153,199,41,0.2);
+  text-shadow: 0 0 24px rgba(120,170,0,0.35);
 }
 
 .timer-glow-red {
-  text-shadow: 0 0 50px rgba(239,68,68,0.65), 0 0 100px rgba(239,68,68,0.3);
+  text-shadow: 0 0 24px rgba(220,38,38,0.35);
   animation: pulse-scale 0.55s ease-in-out infinite;
 }
 
@@ -74,12 +75,12 @@ button {
 /* ── Answer buttons ── */
 .answer-btn {
   transition: all 0.15s ease;
-  border: 1px solid rgba(255,255,255,0.07);
-  background: rgba(255,255,255,0.03);
-  color: white;
-  backdrop-filter: blur(8px);
+  border: 1px solid rgba(13,27,42,0.1);
+  background: #ffffff;
+  color: #0d1b2a;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,100,180,0.08);
 }
 
 .answer-btn::before {
@@ -93,9 +94,10 @@ button {
 }
 
 .answer-btn:not(:disabled):hover {
-  border-color: rgba(153,199,41,0.35);
-  background: rgba(153,199,41,0.06);
-  transform: translateX(2px);
+  border-color: rgba(120,170,0,0.5);
+  background: rgba(153,199,41,0.07);
+  transform: translateX(3px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .answer-btn:not(:disabled):hover::before {
@@ -108,12 +110,12 @@ button {
 
 .answer-btn-correct {
   transition: all 0.15s ease;
-  border: 1px solid rgba(153,199,41,0.8);
-  background: rgba(153,199,41,0.22);
-  color: white;
+  border: 1px solid rgba(61,107,0,0.4);
+  background: rgba(153,199,41,0.12);
+  color: #0d1b2a;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 0 20px rgba(153,199,41,0.15) inset;
+  box-shadow: 0 2px 8px rgba(153,199,41,0.15);
 }
 
 .answer-btn-correct::before {
@@ -127,12 +129,12 @@ button {
 
 .answer-btn-wrong {
   transition: all 0.15s ease;
-  border: 1px solid rgba(239,68,68,0.7);
-  background: rgba(239,68,68,0.18);
-  color: white;
+  border: 1px solid rgba(185,28,28,0.3);
+  background: rgba(220,38,38,0.07);
+  color: #0d1b2a;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 0 20px rgba(239,68,68,0.1) inset;
+  box-shadow: 0 2px 8px rgba(220,38,38,0.08);
 }
 
 .answer-btn-wrong::before {
@@ -151,30 +153,32 @@ button {
 
 /* ── Glass card ── */
 .glass-card {
-  background: rgba(255,255,255,0.035);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 4px 20px rgba(0,100,180,0.1);
 }
 
 /* ── Input fields ── */
 .field-input {
   width: 100%;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.09);
+  background: #ffffff;
+  border: 1.5px solid rgba(0,0,0,0.1);
   border-radius: 14px;
   padding: 14px 16px;
-  color: white;
+  color: #0d1b2a;
   font-size: 16px;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
   outline: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
 
 .field-input::placeholder {
-  color: rgba(255,255,255,0.18);
+  color: rgba(0,0,0,0.28);
 }
 
 .field-input:focus {
-  border-color: rgba(153,199,41,0.5);
-  background: rgba(153,199,41,0.04);
+  border-color: #99c729;
+  box-shadow: 0 0 0 3px rgba(153,199,41,0.15);
 }
 
 /* ── Shimmer skeleton ── */
@@ -186,9 +190,9 @@ button {
 .shimmer {
   background: linear-gradient(
     90deg,
-    rgba(255,255,255,0.04) 25%,
-    rgba(255,255,255,0.09) 50%,
-    rgba(255,255,255,0.04) 75%
+    rgba(0,0,0,0.06) 25%,
+    rgba(0,0,0,0.1) 50%,
+    rgba(0,0,0,0.06) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.6s ease-in-out infinite;
@@ -196,10 +200,30 @@ button {
 
 /* ── Circular timer arc ── */
 .timer-arc-track {
-  stroke: rgba(255,255,255,0.06);
+  stroke: rgba(0,0,0,0.08);
 }
 
 .timer-arc-fill {
   transition: stroke-dashoffset 0.28s linear, stroke 0.4s ease;
   stroke-linecap: round;
+}
+
+/* ── Animations ── */
+@keyframes bounce-in {
+  0% { transform: scale(0.7); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+@keyframes slide-up {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.22s ease both;
 }

@@ -76,7 +76,7 @@ export default function ResultPage() {
   const scoreGradient =
     finalScore >= 20 ? 'linear-gradient(135deg, #c8e86a 0%, #99c729 50%, #6aab00 100%)' :
     finalScore >= 10 ? 'linear-gradient(135deg, #7dd3fc 0%, #009beb 100%)' :
-    'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)';
+    'linear-gradient(135deg, #7dd3fc 0%, #009beb 100%)';
 
   return (
     <div className="min-h-dvh gradient-bg flex flex-col px-5 py-6">
@@ -84,8 +84,8 @@ export default function ResultPage() {
 
         {/* Header */}
         <div className="flex items-center justify-between mb-4 shrink-0">
-          <img src="/logo-transparent.png" alt="72H" className="h-7" />
-          <span className="text-white/20 text-[10px] tracking-[0.25em] uppercase font-semibold">Rezultat</span>
+          <img src="/logo-transparent.png" alt="72H" className="h-10" />
+          <span className="text-brand-blue font-bold text-[10px] tracking-[0.25em] uppercase font-semibold">Rezultat</span>
         </div>
 
         {/* Score card */}
@@ -93,10 +93,10 @@ export default function ResultPage() {
           <div
             className="rounded-2xl px-5 py-5 text-center relative overflow-hidden"
             style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.07)',
-              borderTop: `2px solid ${finalScore >= 20 ? '#99c729' : finalScore >= 10 ? '#009beb' : 'rgba(255,255,255,0.12)'}`,
-              backdropFilter: 'blur(20px)',
+              background: '#ffffff',
+              border: '1px solid rgba(0,0,0,0.07)',
+              borderTop: `2px solid ${finalScore >= 20 ? '#99c729' : finalScore >= 10 ? '#009beb' : 'rgba(0,0,0,0.1)'}`,
+              boxShadow: '0 6px 32px rgba(0,100,180,0.12)',
             }}
           >
             {/* Watermark — high score number, low score faint ? */}
@@ -110,7 +110,7 @@ export default function ResultPage() {
             ) : (
               <div
                 className="absolute right-4 top-1/2 -translate-y-1/2 font-display font-black leading-none pointer-events-none select-none"
-                style={{ fontSize: '100px', opacity: 0.03, color: 'white' }}
+                style={{ fontSize: '100px', opacity: 0.04, color: '#000' }}
               >
                 ?
               </div>
@@ -121,10 +121,10 @@ export default function ResultPage() {
             >
               {displayScore}
             </div>
-            <p className="text-white/50 text-sm font-medium mt-1 relative">{scoreMessage}</p>
-            <p className="text-white/20 text-xs mt-2 relative">
+            <p className="text-[#0d1b2a]/60 text-sm font-medium mt-1 relative">{scoreMessage}</p>
+            <p className="text-[#0d1b2a]/45 text-xs mt-2 relative">
               {state.answeredCount ?? 0} pitanja
-              {myRank ? <span> &middot; plasman <strong className="text-white/40">#{myRank}</strong></span> : null}
+              {myRank ? <span> &middot; plasman <strong className="text-[#0d1b2a]/70">#{myRank}</strong></span> : null}
               <span> &middot; pokušaj {attemptsUsed}/2</span>
             </p>
           </div>
@@ -136,7 +136,7 @@ export default function ResultPage() {
             <button
               onClick={handlePlayAgain}
               className="w-full font-display font-black text-sm py-3 rounded-xl tracking-widest transition-all active:scale-[0.97]"
-              style={{ border: '1px solid rgba(153,199,41,0.35)', color: '#99c729', background: 'rgba(153,199,41,0.06)' }}
+              style={{ border: '1px solid rgba(120,170,0,0.4)', color: '#4a7a00', background: 'rgba(153,199,41,0.08)' }}
             >
               IGRAJ PONOVO — preostao {2 - attemptsUsed} pokušaj
             </button>
@@ -152,12 +152,12 @@ export default function ResultPage() {
                 color: '#0a1a04',
               }}
             >
-              {registrationOpen ? 'PRIJAVI SE' : 'SAZNAJ VIŠE'}
+              {registrationOpen ? 'PRIJAVI SE NA 72H!' : 'PRIJAVI SE NA 72H!'}
             </a>
             <button
               onClick={handleShare}
               className="flex-1 font-display font-black text-sm py-3 rounded-xl tracking-widest transition-all active:scale-[0.97]"
-              style={{ border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.02)' }}
+              style={{ border: '1px solid rgba(13,27,42,0.12)', color: 'rgba(13,27,42,0.55)', background: 'rgba(13,27,42,0.04)' }}
             >
               PODIJELI
             </button>
@@ -165,7 +165,7 @@ export default function ResultPage() {
 
           <button
             onClick={() => navigate('/')}
-            className="w-full text-xs text-white/20 hover:text-white/40 transition-colors py-1 tracking-wide"
+            className="w-full text-xs text-[#0d1b2a]/45 hover:text-[#0d1b2a]/70 transition-colors py-1 tracking-wide"
           >
             ← Povratak na početnu
           </button>
@@ -173,10 +173,10 @@ export default function ResultPage() {
 
         {/* Leaderboard */}
         <div className="mt-1">
-          <p className="text-white/20 text-[10px] tracking-[0.25em] uppercase mb-2 font-semibold">Ljestvica</p>
+          <p className="text-brand-blue font-bold text-[10px] tracking-[0.25em] uppercase mb-2">Ljestvica</p>
           <div
             className="rounded-2xl overflow-hidden"
-            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+            style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 4px 20px rgba(0,100,180,0.1)' }}
           >
             {leaderboard.length === 0 ? (
               <div className="px-3 py-3 space-y-2.5">
@@ -191,42 +191,42 @@ export default function ResultPage() {
             ) : (
               <>
                 {leaderboard.map((row, i) => {
-                  const isMe = myRank === row.rank;
+                  const isMe = myRank !== null && myRank === row.rank;
                   const isTop3 = row.rank <= 3;
                   return (
                     <div
                       key={row.rank}
-                      className={`flex items-center px-3 py-2 gap-3 ${i < leaderboard.length - 1 ? 'border-b border-white/[0.04]' : ''}`}
-                      style={isMe ? { background: 'rgba(153,199,41,0.07)', borderLeft: '2px solid #99c729' } : {}}
+                      className={`flex items-center px-3 py-2 gap-3 ${i < leaderboard.length - 1 ? 'border-b border-black/[0.05]' : ''}`}
+                      style={isMe ? { background: 'rgba(153,199,41,0.08)', borderLeft: '3px solid #99c729' } : {}}
                     >
                       <span className="w-5 text-center shrink-0 text-xs">
                         {isTop3
                           ? MEDALS[row.rank]
-                          : <span className="font-display font-black text-white/35 tabular-nums">{row.rank}</span>
+                          : <span className="font-display font-black text-[#0d1b2a]/40 tabular-nums">{row.rank}</span>
                         }
                       </span>
-                      <span className={`flex-1 text-xs truncate ${isMe ? 'text-white font-bold' : 'text-white/55 font-medium'}`}>
+                      <span className={`flex-1 text-xs truncate ${isMe ? 'text-[#0d1b2a] font-bold' : 'text-[#0d1b2a]/60 font-medium'}`}>
                         {row.nickname}
                       </span>
                       <span
                         className="font-display font-black text-sm tabular-nums shrink-0"
-                        style={{ color: isMe ? '#99c729' : isTop3 ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.2)' }}
+                        style={{ color: isMe ? '#3d6b00' : isTop3 ? '#0d1b2a' : 'rgba(13,27,42,0.4)' }}
                       >
                         {row.score}
                       </span>
                     </div>
                   );
                 })}
-                {!myRankInTop10 && myRow && (
+                {!myRankInTop10 && (
                   <>
-                    <div className="px-3 py-1 text-center text-white/15 text-xs tracking-widest">· · ·</div>
+                    <div className="px-3 py-1 text-center text-[#0d1b2a]/30 text-xs tracking-widest">· · ·</div>
                     <div
                       className="flex items-center px-3 py-2.5 gap-3"
-                      style={{ background: 'rgba(153,199,41,0.07)', borderLeft: '2px solid #99c729' }}
+                      style={{ background: 'rgba(153,199,41,0.08)', borderLeft: '3px solid #99c729' }}
                     >
-                      <span className="w-5 text-center shrink-0 font-display font-black text-xs text-white/35 tabular-nums">{myRow.rank}</span>
-                      <span className="flex-1 text-xs font-bold text-white truncate">{myRow.nickname}</span>
-                      <span className="font-display font-black text-sm tabular-nums" style={{ color: '#99c729' }}>{myRow.score}</span>
+                      <span className="w-5 text-center shrink-0 font-display font-black text-xs text-[#0d1b2a]/40 tabular-nums">{myRow?.rank ?? myRank ?? '—'}</span>
+                      <span className="flex-1 text-xs font-bold text-[#0d1b2a] truncate">{myRow?.nickname ?? 'Ti'}</span>
+                      <span className="font-display font-black text-sm tabular-nums" style={{ color: '#3d6b00' }}>{myRow?.score ?? finalScore}</span>
                     </div>
                   </>
                 )}

@@ -59,10 +59,10 @@ export default function RegisterPage() {
     return (
       <div className="min-h-dvh gradient-bg flex flex-col px-6 py-10">
         <div className="max-w-sm mx-auto w-full flex-1 flex flex-col justify-center items-center text-center gap-8 animate-fade-in">
-          <img src="/logo-transparent.png" alt="72H" className="w-36" />
+          <img src="/logo-transparent.png" alt="72H" className="w-48" />
           <div>
-            <h2 className="font-display font-bold text-2xl text-white mb-3">Još jedan pokušaj?</h2>
-            <p className="text-white/40 text-sm leading-relaxed">
+            <h2 className="font-display font-bold text-2xl text-[#0d1b2a] mb-3">Još jedan pokušaj?</h2>
+            <p className="text-[#0d1b2a]/60 text-sm leading-relaxed">
               Preostalo ti je {2 - (locationState.attemptsUsed ?? 0)} od 2 pokušaja.<br />
               Na ljestvici se pamti tvoj najbolji rezultat.
             </p>
@@ -90,14 +90,14 @@ export default function RegisterPage() {
       <div className="max-w-sm mx-auto w-full animate-fade-in">
 
         <div className="pt-4 pb-10">
-          <img src="/logo-transparent.png" alt="72H" className="h-10 mb-8" />
-          <h2 className="font-display font-bold text-2xl text-white mb-1">Prijava</h2>
-          <p className="text-white/35 text-sm">2 pokušaja · pamti se najbolji rezultat</p>
+          <img src="/logo-transparent.png" alt="72H" className="h-14 mb-8" />
+          <h2 className="font-display font-bold text-2xl text-[#0d1b2a] mb-1">Prijava</h2>
+          <p className="text-[#0d1b2a]/55 text-sm">2 pokušaja · pamti se najbolji rezultat</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-white/40 tracking-widest uppercase mb-2">Ime ili nadimak</label>
+            <label className="block text-xs font-semibold text-[#0d1b2a]/55 tracking-widest uppercase mb-2">Ime ili nadimak</label>
             <input
               type="text"
               value={nickname}
@@ -110,7 +110,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-white/40 tracking-widest uppercase mb-2">E-mail adresa</label>
+            <label className="block text-xs font-semibold text-[#0d1b2a]/55 tracking-widest uppercase mb-2">E-mail adresa</label>
             <input
               type="email"
               value={email}
@@ -130,9 +130,9 @@ export default function RegisterPage() {
                 onChange={(e) => setRulesAccepted(e.target.checked)}
                 className="mt-0.5 w-4 h-4 accent-brand-green shrink-0"
               />
-              <span className="text-sm text-white/40 leading-relaxed">
+              <span className="text-sm text-[#0d1b2a]/60 leading-relaxed">
                 Prihvaćam{' '}
-                <a href="/rules" target="_blank" className="text-brand-green/80 underline underline-offset-2">pravila kviza</a>
+                <a href="/rules" target="_blank" className="text-brand-green underline underline-offset-2">pravila kviza</a>
                 {' '}i uvjete korištenja.
               </span>
             </label>
@@ -144,7 +144,7 @@ export default function RegisterPage() {
                 onChange={(e) => setMarketingConsent(e.target.checked)}
                 className="mt-0.5 w-4 h-4 accent-brand-green shrink-0"
               />
-              <span className="text-sm text-white/40 leading-relaxed">
+              <span className="text-sm text-[#0d1b2a]/60 leading-relaxed">
                 Želim primati obavijesti o projektu 72 sata bez kompromisa.
               </span>
             </label>

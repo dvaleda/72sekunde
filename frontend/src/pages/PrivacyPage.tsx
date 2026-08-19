@@ -28,13 +28,13 @@ export default function PrivacyPage() {
         <button onClick={() => navigate(-1)} className="mb-6 text-sm text-brand-green flex items-center gap-1 hover:opacity-80 transition-opacity">
           ← Natrag
         </button>
-        <h1 className="font-display font-bold text-2xl text-white mb-2">Politika privatnosti</h1>
-        <p className="text-white/50 text-sm mb-6">Aplikacija <strong className="text-white/70">72 sekunde</strong> — kako koristimo tvoje podatke.</p>
+        <h1 className="font-display font-bold text-2xl text-[#0d1b2a] mb-2">Politika privatnosti</h1>
+        <p className="text-[#0d1b2a]/60 text-sm mb-6">Aplikacija <strong className="text-[#0d1b2a]/80">72 sekunde</strong> — kako koristimo tvoje podatke.</p>
         <div className="space-y-4">
           {sections.map(({ title, content }) => (
-            <div key={title} className="bg-white/5 border border-white/10 rounded-2xl px-5 py-4">
+            <div key={title} className="bg-white/80 border border-black/[0.07] rounded-2xl px-5 py-4 shadow-sm">
               <h2 className="font-display font-semibold text-brand-green text-sm mb-1">{title}</h2>
-              <p className="text-white/60 text-sm leading-relaxed">{content}</p>
+              <p className="text-[#0d1b2a]/65 text-sm leading-relaxed">{content}</p>
             </div>
           ))}
         </div>

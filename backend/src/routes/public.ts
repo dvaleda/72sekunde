@@ -249,11 +249,29 @@ publicRouter.get('/attempts/:id/question', async (req, res) => {
 
   const { data: question } = await supabase
     .from('questions')
-    .select('id, question_text, option_a, option_b, option_c, category')
+    .select('id, question_text, option_a, option_b, option_c, correct_answer, category')
     .eq('id', nextQuestionId)
     .single();
 
   if (!question) return res.status(500).json({ error: 'Pitanje nije pronađeno.' });
+
+  // Deterministic shuffle seeded by attemptId+questionId so /answer can reproduce it.
+  const seed = [...(attemptId + question.id)].reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const seededRand = (n: number) => { const x = Math.sin(seed + n) * 10000; return x - Math.floor(x); };
+  const shuffleOrder = [0, 1, 2];
+  for (let i = 2; i > 0; i--) {
+    const j = Math.floor(seededRand(i) * (i + 1));
+    [shuffleOrder[i], shuffleOrder[j]] = [shuffleOrder[j], shuffleOrder[i]];
+  }
+  const origOptions = [question.option_a, question.option_b, question.option_c];
+  const origCorrectIdx = question.correct_answer === 'A' ? 0 : question.correct_answer === 'B' ? 1 : 2;
+  const keys = ['A', 'B', 'C'] as const;
+  const shuffledOptions: Record<string, string> = {};
+  let shuffledCorrect = 'A';
+  shuffleOrder.forEach((origIdx, newIdx) => {
+    shuffledOptions[keys[newIdx]] = origOptions[origIdx];
+    if (origIdx === origCorrectIdx) shuffledCorrect = keys[newIdx];
+  });
 
   return res.json({
     finished: false,
@@ -261,7 +279,7 @@ publicRouter.get('/attempts/:id/question', async (req, res) => {
       id: question.id,
       text: question.question_text,
       category: question.category,
-      options: { A: question.option_a, B: question.option_b, C: question.option_c },
+      options: shuffledOptions,
     },
     expiresAt: attempt.expires_at,
     sequenceNumber: answeredIds.size + 1,
@@ -318,7 +336,20 @@ publicRouter.post('/attempts/:id/answer', async (req, res) => {
     .eq('attempt_id', attemptId);
   const sequenceNumber = (answeredRows?.length ?? 0) + 1;
 
-  const isCorrect = (selected as OptionKey) === question.correct_answer;
+  // Reproduce the same deterministic shuffle used in /question to map
+  // the client's selected key back to the original A/B/C slot.
+  const seed = [...(attemptId + questionId)].reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const seededRand = (n: number) => { const x = Math.sin(seed + n) * 10000; return x - Math.floor(x); };
+  const shuffleOrder = [0, 1, 2];
+  for (let i = 2; i > 0; i--) {
+    const j = Math.floor(seededRand(i) * (i + 1));
+    [shuffleOrder[i], shuffleOrder[j]] = [shuffleOrder[j], shuffleOrder[i]];
+  }
+  const abcKeys = ['A', 'B', 'C'] as const;
+  const selectedNewIdx = abcKeys.indexOf(selected as typeof abcKeys[number]);
+  const originalSelected = abcKeys[shuffleOrder[selectedNewIdx]] as OptionKey;
+
+  const isCorrect = originalSelected === question.correct_answer;
 
   const { error: insertErr } = await supabase.from('answers').insert({
     attempt_id: attemptId,
@@ -352,7 +383,10 @@ publicRouter.post('/attempts/:id/answer', async (req, res) => {
     })
     .eq('id', attemptId);
 
-  return res.json({ accepted: true, correct: isCorrect, correctAnswer: question.correct_answer, expiresAt: newExpiresAt.toISOString(), streakBonus });
+  const origCorrectIdx = question.correct_answer === 'A' ? 0 : question.correct_answer === 'B' ? 1 : 2;
+  const shuffledCorrectKey = abcKeys[shuffleOrder.indexOf(origCorrectIdx)];
+
+  return res.json({ accepted: true, correct: isCorrect, correctAnswer: shuffledCorrectKey, expiresAt: newExpiresAt.toISOString(), streakBonus });
 });
 
 // ---------- POST /api/attempts/:id/finish ----------

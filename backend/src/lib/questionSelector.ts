@@ -259,27 +259,27 @@ export function pickAdaptiveNext(
 ): QuestionRow | null {
   if (remainingPool.length === 0) return null;
 
-  const byDifficultyAndCategory = remainingPool.find(
+  const pickRandom = (candidates: QuestionRow[]) =>
+    candidates[Math.floor(Math.random() * candidates.length)];
+
+  const byDiffAndCat = remainingPool.filter(
     (q) => q.difficulty === targetDifficulty && q.category !== lastCategory
   );
-  if (byDifficultyAndCategory) return byDifficultyAndCategory;
+  if (byDiffAndCat.length > 0) return pickRandom(byDiffAndCat);
 
-  const byDifficultyOnly = remainingPool.find((q) => q.difficulty === targetDifficulty);
-  if (byDifficultyOnly) return byDifficultyOnly;
+  const byDiffOnly = remainingPool.filter((q) => q.difficulty === targetDifficulty);
+  if (byDiffOnly.length > 0) return pickRandom(byDiffOnly);
 
-  // Nothing left at the target tier (pool is running low) — try the next
-  // hardest available tier before falling all the way back to EASY, so a
-  // hot streak still gets *something* harder than a pure EASY fallback.
   const fallbackOrder: Difficulty[] =
     targetDifficulty === 'HARD' ? ['MEDIUM', 'EASY'] : targetDifficulty === 'MEDIUM' ? ['HARD', 'EASY'] : ['MEDIUM', 'HARD'];
   for (const tier of fallbackOrder) {
-    const match = remainingPool.find((q) => q.difficulty === tier && q.category !== lastCategory);
-    if (match) return match;
+    const matches = remainingPool.filter((q) => q.difficulty === tier && q.category !== lastCategory);
+    if (matches.length > 0) return pickRandom(matches);
   }
   for (const tier of fallbackOrder) {
-    const match = remainingPool.find((q) => q.difficulty === tier);
-    if (match) return match;
+    const matches = remainingPool.filter((q) => q.difficulty === tier);
+    if (matches.length > 0) return pickRandom(matches);
   }
 
-  return remainingPool[0]; // absolute fallback: whatever's left
+  return remainingPool[Math.floor(Math.random() * remainingPool.length)];
 }

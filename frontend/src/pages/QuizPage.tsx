@@ -35,6 +35,11 @@ function haptic(pattern: number | number[]) {
 
 const CATEGORY_LABELS: Record<string, string> = {
   '72H': '72H',
+  'MARIJA_BISTRICA': 'Marija Bistrica',
+  'BIBLIJA': 'Biblija',
+  'VJERA': 'Vjera',
+  'SVECI': 'Sveci',
+  'MARIJA_KRUNICA': 'Marija i krunica',
   'marija_bistrica': 'Marija Bistrica',
   'biblija': 'Biblija',
   'vjera': 'Vjera',
@@ -44,6 +49,11 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const CATEGORY_COLORS: Record<string, string> = {
   '72H': 'rgba(153,199,41,0.18)',
+  'MARIJA_BISTRICA': 'rgba(0,155,235,0.18)',
+  'BIBLIJA': 'rgba(240,192,64,0.18)',
+  'VJERA': 'rgba(180,120,255,0.18)',
+  'SVECI': 'rgba(255,140,80,0.18)',
+  'MARIJA_KRUNICA': 'rgba(0,155,235,0.18)',
   'marija_bistrica': 'rgba(0,155,235,0.18)',
   'biblija': 'rgba(240,192,64,0.18)',
   'vjera': 'rgba(180,120,255,0.18)',
@@ -53,6 +63,11 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 const CATEGORY_BORDER: Record<string, string> = {
   '72H': 'rgba(153,199,41,0.35)',
+  'MARIJA_BISTRICA': 'rgba(0,155,235,0.3)',
+  'BIBLIJA': 'rgba(240,192,64,0.3)',
+  'VJERA': 'rgba(180,120,255,0.3)',
+  'SVECI': 'rgba(255,140,80,0.3)',
+  'MARIJA_KRUNICA': 'rgba(0,155,235,0.3)',
   'marija_bistrica': 'rgba(0,155,235,0.3)',
   'biblija': 'rgba(240,192,64,0.3)',
   'vjera': 'rgba(180,120,255,0.3)',
@@ -61,12 +76,17 @@ const CATEGORY_BORDER: Record<string, string> = {
 };
 
 const CATEGORY_TEXT: Record<string, string> = {
-  '72H': '#99c729',
-  'marija_bistrica': '#009beb',
-  'biblija': '#f0c040',
-  'vjera': '#b478ff',
-  'sveci': '#ff8c50',
-  'marija_krunica': '#009beb',
+  '72H': '#5a8a00',
+  'MARIJA_BISTRICA': '#0077b6',
+  'BIBLIJA': '#b07d00',
+  'VJERA': '#7c3aed',
+  'SVECI': '#c2410c',
+  'MARIJA_KRUNICA': '#0077b6',
+  'marija_bistrica': '#0077b6',
+  'biblija': '#b07d00',
+  'vjera': '#7c3aed',
+  'sveci': '#c2410c',
+  'marija_krunica': '#0077b6',
 };
 
 // SVG circular arc timer
@@ -119,6 +139,7 @@ export default function QuizPage() {
   );
   const [questionKey, setQuestionKey] = useState(0);
   const [questionCount, setQuestionCount] = useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(72);
   const [locked, setLocked] = useState(false);
   const [answerState, setAnswerState] = useState<AnswerState>(null);
@@ -210,6 +231,7 @@ export default function QuizPage() {
       if (res.correct) {
         playSound('correct');
         haptic(40);
+        setCorrectCount(c => c + 1);
         const newStreak = streak + 1;
         setStreak(newStreak);
         if (newStreak >= 3) {
@@ -254,10 +276,10 @@ export default function QuizPage() {
   }
 
   function keyBadgeStyle(key: 'A' | 'B' | 'C') {
-    if (!answerState) return { background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' };
-    if (key === answerState.correctAnswer) return { background: 'rgba(153,199,41,0.3)', color: '#99c729' };
-    if (key === answerState.selected && !answerState.correct) return { background: 'rgba(239,68,68,0.3)', color: '#f87171' };
-    return { background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.2)' };
+    if (!answerState) return { background: 'rgba(13,27,42,0.07)', color: 'rgba(13,27,42,0.55)' };
+    if (key === answerState.correctAnswer) return { background: 'rgba(153,199,41,0.22)', color: '#3d6b00' };
+    if (key === answerState.selected && !answerState.correct) return { background: 'rgba(220,38,38,0.12)', color: '#b91c1c' };
+    return { background: 'rgba(13,27,42,0.04)', color: 'rgba(13,27,42,0.25)' };
   }
 
   // Countdown screen
@@ -280,7 +302,7 @@ export default function QuizPage() {
             </div>
           </div>
         </div>
-        <p className="text-white/25 text-[11px] tracking-[0.3em] uppercase">Spremi se</p>
+        <p className="text-[#0d1b2a]/45 text-[11px] tracking-[0.3em] uppercase">Spremi se</p>
       </div>
     );
   }
@@ -290,76 +312,94 @@ export default function QuizPage() {
   const catBorder = question?.category ? CATEGORY_BORDER[question.category] : 'rgba(153,199,41,0.3)';
 
   return (
-    <div className="min-h-dvh gradient-bg flex flex-col px-5 py-6">
-      <div className="max-w-sm mx-auto w-full flex-1 flex flex-col">
+    <div className="min-h-dvh gradient-bg flex flex-col px-4 pt-4 pb-5">
+      <div className="max-w-sm mx-auto w-full flex flex-col gap-3">
 
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <img src="/logo-transparent.png" alt="72H" className="h-6" />
-          {questionCount > 0 && (
-            <span className="text-white/20 text-xs tabular-nums">{questionCount} odg.</span>
-          )}
+        {/* Logo — transparent, no background, centered top */}
+        <div className="flex items-center justify-between">
+          <img src="/logo-transparent.png" alt="72H" className="h-14 w-auto" style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.18))' }} />
+          {/* Score counter */}
+          <div className="flex flex-col items-end">
+            <span
+              className="font-display font-black text-3xl tabular-nums leading-none"
+              style={{ background: 'linear-gradient(135deg,#99c729,#009beb)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+            >
+              {correctCount}
+            </span>
+            <span className="text-[#0d1b2a]/45 text-[10px] tracking-widest uppercase">točno</span>
+          </div>
         </div>
 
-        {/* Timer — compact row */}
-        <div className="flex items-center gap-4 mb-4">
+        {/* Timer row */}
+        <div className="flex items-center gap-3">
           <div className="relative shrink-0">
             <ArcTimer progress={progress} urgent={isUrgent} />
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className={`font-display font-black text-3xl tabular-nums leading-none ${isUrgent ? 'text-red-400 timer-glow-red' : 'text-brand-green timer-glow-green'}`}>
+              <span className={`font-display font-black text-[28px] tabular-nums leading-none ${isUrgent ? 'text-red-400 timer-glow-red' : 'text-brand-green timer-glow-green'}`}>
                 {displaySeconds}
               </span>
-              <span className="text-white/20 text-[9px] tracking-widest uppercase mt-0.5">sek</span>
+              <span className="text-[#0d1b2a]/40 text-[9px] tracking-widest uppercase">sek</span>
             </div>
           </div>
-          <div className="flex-1 flex flex-col gap-1">
+          <div className="flex-1 flex flex-col justify-center gap-0.5 min-w-0">
             {streakBonusMsg ? (
-              <span className="font-display font-black text-sm animate-bounce-in" style={{ color: '#99c729' }}>+3 sekunde!</span>
+              <span className="font-display font-black text-base animate-bounce-in" style={{ color: '#99c729' }}>+3 sekunde! 🔥</span>
             ) : showStreak ? (
-              <span className="font-display font-black text-sm animate-bounce-in" style={{ color: '#99c729' }}>{streak}× zaredom!</span>
+              <span className="font-display font-black text-base animate-bounce-in" style={{ color: '#99c729' }}>{streak}× zaredom! 🔥</span>
             ) : (
-              <span className={`text-xs ${isUrgent ? 'text-red-400/70 font-semibold' : 'text-white/20'}`}>{isUrgent ? 'Požuri!' : 'Odgovori na što više pitanja'}</span>
+              <span className={`text-sm font-semibold ${isUrgent ? 'text-red-500' : 'text-[#0d1b2a]/60'}`}>
+                {isUrgent ? '⚡ Požuri!' : 'Odgovori na što više'}
+              </span>
             )}
+            <span className="text-[#0d1b2a]/40 text-xs tabular-nums">
+              {questionCount} pitanja odgovoreno
+            </span>
           </div>
         </div>
 
-        {error && <p className="text-red-400 text-sm text-center mb-4">{error}</p>}
+        {error && <p className="text-red-400 text-sm text-center">{error}</p>}
 
         {!question ? (
-          <div className="flex-1 flex flex-col gap-3">
-            <div className="h-6 w-24 rounded-full shimmer" />
-            <div className="rounded-2xl flex-1 shimmer" style={{ minHeight: '120px' }} />
-            <div className="space-y-2">
+          <div className="flex flex-col gap-3">
+            <div className="h-5 w-24 rounded-full shimmer" />
+            <div className="rounded-2xl shimmer" style={{ minHeight: '160px' }} />
+            <div className="space-y-2.5">
               {[0, 1, 2].map(i => (
-                <div key={i} className="h-12 rounded-xl shimmer" style={{ opacity: 1 - i * 0.15 }} />
+                <div key={i} className="h-14 rounded-xl shimmer" style={{ opacity: 1 - i * 0.15 }} />
               ))}
             </div>
           </div>
         ) : (
-          <div key={questionKey} className="flex-1 flex flex-col animate-slide-up">
+          <div key={questionKey} className="flex flex-col animate-slide-up gap-2.5">
+
             {/* Category tag */}
             {question.category && (
-              <div className="mb-3">
-                <span
-                  className="text-[10px] font-black tracking-[0.22em] uppercase px-3 py-1.5 rounded-full"
-                  style={{ background: catBg, border: `1px solid ${catBorder}`, color: catColor }}
-                >
-                  {CATEGORY_LABELS[question.category] ?? question.category}
-                </span>
-              </div>
+              <span
+                className="self-start text-[10px] font-black tracking-[0.22em] uppercase px-3 py-1 rounded-full"
+                style={{ background: catBg, border: `1px solid ${catBorder}`, color: catColor }}
+              >
+                {CATEGORY_LABELS[question.category] ?? question.category}
+              </span>
             )}
 
             {/* Question card */}
             <div
-              className="rounded-2xl px-5 py-5 mb-3 flex-1 flex items-center justify-center"
+              className="rounded-2xl px-5 py-6 flex items-center justify-center relative overflow-hidden"
               style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.07)',
-                borderTop: `2px solid ${catBorder}`,
-                backdropFilter: 'blur(16px)',
+                background: '#ffffff',
+                border: '1px solid rgba(0,0,0,0.07)',
+                borderTop: `3px solid ${catBorder}`,
+                boxShadow: '0 4px 24px rgba(0,100,180,0.11)',
+                minHeight: '150px',
               }}
             >
-              <p className="font-display font-black text-xl text-white text-center leading-snug">
+              <img
+                src="/logo-transparent.png"
+                alt="" aria-hidden
+                className="absolute right-3 bottom-2 h-10 pointer-events-none select-none"
+                style={{ opacity: 0.06, filter: 'saturate(0)' }}
+              />
+              <p className="font-display font-black text-xl text-[#0d1b2a] text-center leading-snug relative z-10">
                 {question.text}
               </p>
             </div>
@@ -371,7 +411,7 @@ export default function QuizPage() {
                   key={key}
                   disabled={locked}
                   onClick={() => handleAnswer(key)}
-                  className={`${btnStyle(key)} w-full text-left rounded-xl px-4 py-3 flex items-center gap-3 disabled:cursor-default`}
+                  className={`${btnStyle(key)} w-full text-left rounded-xl px-4 py-3.5 flex items-center gap-3 disabled:cursor-default`}
                 >
                   <span
                     className="w-7 h-7 rounded-md font-display font-black flex items-center justify-center shrink-0 text-[11px] transition-all duration-150"
@@ -379,7 +419,7 @@ export default function QuizPage() {
                   >
                     {key}
                   </span>
-                  <span className="text-white/75 text-sm leading-snug">{question.options[key]}</span>
+                  <span className="text-[#0d1b2a] text-sm leading-snug font-medium">{question.options[key]}</span>
                 </button>
               ))}
             </div>

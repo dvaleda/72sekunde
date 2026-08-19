@@ -17,16 +17,16 @@ export default function LandingPage() {
         <img
           src="/logo-transparent.png"
           alt="72 sata bez kompromisa"
-          className="w-32 mb-10"
+          className="w-48 mb-8"
         />
 
-        <h1 className="font-display font-black text-6xl leading-none tracking-tight mb-4">
+        <h1 className="font-display font-black text-7xl leading-none tracking-tight mb-4">
           <span className="text-brand-green">72</span>
-          <span className="text-white"> SEK</span>
+          <span className="text-[#0d1b2a]"> SEK</span>
           <span className="text-brand-blue">UNDE</span>
         </h1>
 
-        <p className="text-white/40 text-sm leading-relaxed mb-8">
+        <p className="text-[#0d1b2a]/60 text-sm leading-relaxed mb-8">
           Koliko znaš o vjeri, Mariji Bistrici i projektu 72 sata bez kompromisa?
           Imaš 72 sekunde — odgovori na što više pitanja.
         </p>
@@ -34,12 +34,12 @@ export default function LandingPage() {
         {stats && stats.totalPlayers > 0 && (
           <div className="flex gap-3 mb-8">
             <div className="flex-1 glass-card rounded-xl px-4 py-3 flex items-center gap-3">
-              <span className="font-display font-black text-2xl text-white tabular-nums">{stats.totalPlayers}</span>
-              <span className="text-white/45 text-xs leading-tight">igrača<br />do sad</span>
+              <span className="font-display font-black text-2xl text-[#0d1b2a] tabular-nums">{stats.totalPlayers}</span>
+              <span className="text-[#0d1b2a]/50 text-xs leading-tight">igrača<br />do sad</span>
             </div>
             <div className="flex-1 glass-card rounded-xl px-4 py-3 flex items-center gap-3">
               <span className="font-display font-black text-2xl tabular-nums" style={{ color: '#99c729' }}>{stats.topScore}</span>
-              <span className="text-white/45 text-xs leading-tight">trenutni<br />rekord</span>
+              <span className="text-[#0d1b2a]/50 text-xs leading-tight">trenutni<br />rekord</span>
             </div>
           </div>
         )}
@@ -58,10 +58,10 @@ export default function LandingPage() {
 
       </div>
 
-      <div className="text-center text-[11px] text-white/20 space-x-4 pb-2">
-        <a href="/rules" className="hover:text-white/45 transition-colors">Pravila kviza</a>
+      <div className="text-center text-[11px] text-[#0d1b2a]/45 space-x-4 pb-2">
+        <a href="/rules" className="hover:text-[#0d1b2a]/70 transition-colors">Pravila kviza</a>
         <span>·</span>
-        <a href="/privacy" className="hover:text-white/45 transition-colors">Privatnost</a>
+        <a href="/privacy" className="hover:text-[#0d1b2a]/70 transition-colors">Privatnost</a>
       </div>
     </div>
   );

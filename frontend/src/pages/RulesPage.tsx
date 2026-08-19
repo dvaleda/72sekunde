@@ -9,7 +9,7 @@ export default function RulesPage() {
         <button onClick={() => navigate(-1)} className="mb-6 text-sm text-brand-green flex items-center gap-1 hover:opacity-80 transition-opacity">
           ← Natrag
         </button>
-        <h1 className="font-display font-bold text-2xl text-white mb-6">Pravila kviza</h1>
+        <h1 className="font-display font-bold text-2xl text-[#0d1b2a] mb-6">Pravila kviza</h1>
         <ul className="space-y-3">
           {[
             'Kviz traje točno 72 sekunde.',
@@ -20,7 +20,7 @@ export default function RulesPage() {
             'Vrijeme se mjeri na poslužitelju i ne može se produžiti mijenjanjem postavki na tvom uređaju.',
             'Konačan rezultat prikazuje se odmah po isteku vremena.',
           ].map((rule, i) => (
-            <li key={i} className="flex items-start gap-3 text-white/70 text-sm">
+            <li key={i} className="flex items-start gap-3 text-[#0d1b2a]/70 text-sm">
               <span className="text-brand-green font-bold shrink-0">{i + 1}.</span>
               <span>{rule}</span>
             </li>
