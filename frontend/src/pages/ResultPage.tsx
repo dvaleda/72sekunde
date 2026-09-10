@@ -174,6 +174,19 @@ export default function ResultPage() {
         {/* Leaderboard */}
         <div className="mt-1">
           <p className="text-brand-blue font-bold text-[10px] tracking-[0.25em] uppercase mb-2">Ljestvica</p>
+
+          {/* Prize announcement */}
+          <div
+            className="rounded-xl px-4 py-3 mb-3 text-center"
+            style={{ background: 'rgba(153,199,41,0.12)', border: '1px solid rgba(153,199,41,0.25)' }}
+          >
+            <p className="text-[#3d6b00] text-sm font-semibold">
+              🏆 Podjela nagrada i objava pobjednika u <strong>15:00</strong>
+            </p>
+            <p className="text-[#3d6b00]/70 text-xs mt-1">
+              Nagrade osvajaju prva 3 mjesta + predzadnje mjesto!
+            </p>
+          </div>
           <div
             className="rounded-2xl overflow-hidden"
             style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 4px 20px rgba(0,100,180,0.1)' }}
