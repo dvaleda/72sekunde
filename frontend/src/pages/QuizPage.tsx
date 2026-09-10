@@ -193,10 +193,12 @@ export default function QuizPage() {
   const loadNextQuestion = useCallback(async () => {
     if (!attemptId) return;
     setLocked(true);
-    setAnswerState(null);
     try {
       const res = await api.getNextQuestion(attemptId);
       if (res.finished) { finish(); return; }
+      // Reset answerState atomically with the new question so no render
+      // ever shows the old answerState colours on the new question's buttons.
+      setAnswerState(null);
       setQuestion(res.question);
       setExpiresAt(res.expiresAt);
       setQuestionKey(k => k + 1);

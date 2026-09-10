@@ -144,7 +144,7 @@ export default function ResultPage() {
 
           <div className="flex gap-2">
             <a
-              href={registrationOpen ? (config?.official_registration_url ?? '#') : (config?.official_project_url ?? 'https://72h.hr/')}
+              href={registrationOpen ? (config?.official_registration_url ?? 'https://prijava.72h.hr/72sata/prijava_volontera') : 'https://prijava.72h.hr/72sata/prijava_volontera'}
               className="flex-1 text-center font-display font-black text-sm py-3 rounded-xl tracking-widest transition-all active:scale-[0.97]"
               style={{
                 background: 'linear-gradient(135deg, #a8d42e 0%, #99c729 50%, #7aab1a 100%)',

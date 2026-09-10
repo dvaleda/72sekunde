@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { api, ApiError } from '../lib/api';
 
@@ -12,6 +12,9 @@ export default function RegisterPage() {
   const [marketingConsent, setMarketingConsent] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Pre-warm the backend on page load so Render free tier isn't cold on submit.
+  useEffect(() => { api.getEventConfig().catch(() => {}); }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,18 +40,15 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const already = await api.checkAttempt(email.trim().toLowerCase());
-      if (already.hasPlayed) {
-        setError('Iskorištena su oba pokušaja. Hvala na sudjelovanju!');
-        setLoading(false);
-        return;
-      }
       const { player } = await api.createPlayer({ nickname: nickname.trim(), email: email.trim(), termsAccepted: true, marketingConsent });
       const { attempt } = await api.createAttempt(player.id);
       const firstQuestion = await api.getNextQuestion(attempt.id);
       navigate('/play', { state: { attemptId: attempt.id, expiresAt: attempt.expiresAt, firstQuestion } });
     } catch (err) {
-      if (err instanceof ApiError) setError(err.message);
+      if (err instanceof ApiError) {
+        if (err.status === 409) setError('Iskorištena su oba pokušaja. Hvala na sudjelovanju!');
+        else setError(err.message);
+      }
       else setError('Nešto je pošlo po zlu. Pokušaj ponovno.');
     } finally {
       setLoading(false);
