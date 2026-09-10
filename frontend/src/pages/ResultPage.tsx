@@ -144,7 +144,7 @@ export default function ResultPage() {
 
           <div className="flex gap-2">
             <a
-              href={registrationOpen ? (config?.official_registration_url ?? 'https://prijava.72h.hr/72sata/prijava_volontera') : 'https://prijava.72h.hr/72sata/prijava_volontera'}
+              href="https://72h.hr/"
               className="flex-1 text-center font-display font-black text-sm py-3 rounded-xl tracking-widest transition-all active:scale-[0.97]"
               style={{
                 background: 'linear-gradient(135deg, #a8d42e 0%, #99c729 50%, #7aab1a 100%)',
@@ -152,7 +152,7 @@ export default function ResultPage() {
                 color: '#0a1a04',
               }}
             >
-              {registrationOpen ? 'PRIJAVI SE NA 72H!' : 'PRIJAVI SE NA 72H!'}
+              {registrationOpen ? 'PRIJAVI SE NA 72H!' : 'SAZNAJ VIŠE O 72H'}
             </a>
             <button
               onClick={handleShare}
